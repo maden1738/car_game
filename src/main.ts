@@ -6,12 +6,16 @@ import clamp from "./utils/clamp";
 import playerSprite from "./assets/11.png";
 import obstacleSprite from "./assets/car-sprite.png";
 
+// start screen
 const main = document.querySelector("main") as HTMLElement;
 const startScreen = document.querySelector(".start-screen") as HTMLElement;
 const startButton = document.querySelector(
      "#start-button"
 ) as HTMLButtonElement;
+
+// hiding game screen initially
 main.style.display = "none";
+
 startButton.addEventListener("click", () => {
      main.style.display = "flex";
      Game();
@@ -65,6 +69,77 @@ function Game() {
      const carArr = [car1, car2, car3];
      let gameSpeed = SPEED.OBSTACLE_SPEED;
 
+     // newly generated position with positions of other cars to ensure fair obstacle generation
+     function generateNewPosition(car: Sprite) {
+          let newPosition = getRandomArbitrary(-500, 0);
+          carArr.forEach((el) => {
+               if (Math.abs(newPosition - el.y) < DIMENSIONS.CAR_HEIGHT * 3) {
+                    newPosition -= DIMENSIONS.CAR_HEIGHT * 3;
+               }
+          });
+          car.y = newPosition;
+     }
+
+     // increments score and obstacle speed
+     function updateGameState() {
+          gameSpeed += 0.2;
+          console.log(gameSpeed);
+          score++;
+          scoreSpan.innerHTML = String(score);
+     }
+
+     function animatePlayer() {
+          ctx.drawImage(
+               playerCar.image,
+               playerCar.x,
+               playerCar.y,
+               playerCar.width,
+               playerCar.height
+          );
+
+          if (playerCar.x < playerCar.targetX) {
+               playerCar.x = Math.min(
+                    playerCar.x + SPEED.PLAYER_SPEED,
+                    playerCar.targetX
+               );
+          } else if (playerCar.x > playerCar.targetX) {
+               playerCar.x = Math.max(
+                    playerCar.x - SPEED.PLAYER_SPEED,
+                    playerCar.targetX
+               );
+          }
+     }
+
+     function resetGame() {
+          gameOver = false;
+          gameSpeed = SPEED.OBSTACLE_SPEED;
+          score = 0;
+          const gameOverScreen = document.querySelector(
+               ".gameover-screen"
+          ) as HTMLDivElement;
+          gameOverScreen.style.display = "none";
+          Game();
+     }
+
+     function handleGameOver() {
+          // displying game over screeen
+          const gameOverScreen = document.querySelector(
+               ".gameover-screen"
+          ) as HTMLDivElement;
+          gameOverScreen.style.display = "flex";
+
+          // displaying score
+          (document.querySelector("#final-score") as HTMLElement).innerHTML =
+               String(score);
+
+          const playAgainBtn = document.querySelector(
+               "#play-again"
+          ) as HTMLButtonElement;
+          playAgainBtn.addEventListener("click", () => {
+               resetGame();
+          });
+     }
+
      function draw() {
           ctx.clearRect(
                0,
@@ -81,72 +156,27 @@ function Game() {
                     gameOver = true;
                }
                car.y += clamp(gameSpeed, 0, SPEED.MAX_SPEED);
+
                // car reaches bottom
                if (car.y > DIMENSIONS.CANVAS_HEIGHT) {
-                    gameSpeed += 0.1;
-                    console.log(gameSpeed);
-                    score++;
-                    scoreSpan.innerHTML = String(score);
-                    let newPosition = getRandomArbitrary(-500, 0);
-                    carArr.forEach((el) => {
-                         if (
-                              Math.abs(newPosition - el.y) <
-                              DIMENSIONS.CAR_HEIGHT * 3
-                         ) {
-                              newPosition -= DIMENSIONS.CAR_HEIGHT * 3;
-                         }
-                    });
-                    car.y = newPosition;
+                    updateGameState();
+                    generateNewPosition(car);
                }
           });
 
-          ctx.drawImage(
-               playerCar.image,
-               playerCar.x,
-               playerCar.y,
-               playerCar.width,
-               playerCar.height
-          );
-          if (playerCar.x < playerCar.targetX) {
-               playerCar.x = Math.min(
-                    playerCar.x + SPEED.PLAYER_SPEED,
-                    playerCar.targetX
-               );
-          } else if (playerCar.x > playerCar.targetX) {
-               playerCar.x = Math.max(
-                    playerCar.x - SPEED.PLAYER_SPEED,
-                    playerCar.targetX
-               );
-          }
+          animatePlayer();
 
           if (gameOver) {
                cancelAnimationFrame(myReq);
-               const gameOverScreen = document.querySelector(
-                    ".gameover-screen"
-               ) as HTMLDivElement;
-               gameOverScreen.style.display = "flex";
-               (
-                    document.querySelector("#final-score") as HTMLElement
-               ).innerHTML = String(score);
-               const playAgainBtn = document.querySelector(
-                    "#play-again"
-               ) as HTMLButtonElement;
-               playAgainBtn.addEventListener("click", () => {
-                    console.log("here");
-                    gameOver = false;
-                    gameSpeed = SPEED.OBSTACLE_SPEED;
-                    score = 0;
-                    gameOverScreen.style.display = "none";
-                    Game();
-               });
+               handleGameOver();
                return;
           }
           myReq = requestAnimationFrame(draw);
      }
+
      draw();
 
      window.addEventListener("keydown", (event) => {
-          console.log(event.key);
           switch (event.key) {
                case "a": {
                     if (playerCar.x >= middleLane) {
