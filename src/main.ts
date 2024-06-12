@@ -1,6 +1,7 @@
 import { DIMENSIONS, SPEED } from "./constants";
 import "./style.css";
 import { Sprite } from "./classes/Sprite";
+import { Rectangle } from "./classes/Rectangle";
 import getRandomArbitrary from "./utils/randomNumberGenerator";
 import clamp from "./utils/clamp";
 import playerSprite from "./assets/11.png";
@@ -35,6 +36,11 @@ canvas.height = DIMENSIONS.CANVAS_HEIGHT;
 const middleLane = DIMENSIONS.CANVAS_WIDTH / 2 - DIMENSIONS.CAR_WIDTH / 2;
 const leftLane = middleLane - DIMENSIONS.CANVAS_WIDTH / 3;
 const rightLane = middleLane + DIMENSIONS.CANVAS_WIDTH / 3;
+const leftDivider = DIMENSIONS.CANVAS_WIDTH / 3 - DIMENSIONS.DIVIDER_WIDTH;
+const rightDivider =
+     DIMENSIONS.CANVAS_WIDTH -
+     DIMENSIONS.CANVAS_WIDTH / 3 -
+     DIMENSIONS.DIVIDER_WIDTH;
 
 function Game() {
      scoreSpan.innerHTML = String(score);
@@ -68,6 +74,25 @@ function Game() {
      );
      const carArr = [car1, car2, car3];
      let gameSpeed = SPEED.OBSTACLE_SPEED;
+
+     const divider1 = new Rectangle(leftDivider, 0);
+     const divider2 = new Rectangle(leftDivider, DIMENSIONS.DIVIDER_GAP);
+     const divider3 = new Rectangle(leftDivider, DIMENSIONS.DIVIDER_GAP * 2);
+     const divider4 = new Rectangle(leftDivider, DIMENSIONS.DIVIDER_GAP * -1);
+     const divider5 = new Rectangle(rightDivider, 0);
+     const divider6 = new Rectangle(rightDivider, DIMENSIONS.DIVIDER_GAP);
+     const divider7 = new Rectangle(rightDivider, DIMENSIONS.DIVIDER_GAP * 2);
+     const divider8 = new Rectangle(rightDivider, DIMENSIONS.DIVIDER_GAP * -1);
+     const dividerArr = [
+          divider1,
+          divider2,
+          divider3,
+          divider4,
+          divider5,
+          divider6,
+          divider7,
+          divider8,
+     ];
 
      // newly generated position with positions of other cars to ensure fair obstacle generation
      function generateNewPosition(car: Sprite) {
@@ -140,6 +165,24 @@ function Game() {
           });
      }
 
+     function animateLane() {
+          dividerArr.forEach((divider) => {
+               ctx.fillStyle = "#fafafa";
+               ctx.fillRect(
+                    divider.x,
+                    divider.y,
+                    divider.width,
+                    divider.height
+               );
+               divider.y += SPEED.DIVIDER_SPEED;
+               if (divider.y > DIMENSIONS.CANVAS_HEIGHT) {
+                    divider.y = -150;
+               }
+          });
+     }
+
+     function bulletFired() {}
+
      function draw() {
           ctx.clearRect(
                0,
@@ -149,6 +192,8 @@ function Game() {
           );
           ctx.fillStyle = "#000";
           ctx.fillRect(0, 0, DIMENSIONS.CANVAS_WIDTH, DIMENSIONS.CANVAS_HEIGHT);
+
+          animateLane();
 
           carArr.forEach((car) => {
                ctx.drawImage(car.image, car.x, car.y, car.width, car.height);
@@ -177,6 +222,8 @@ function Game() {
      draw();
 
      window.addEventListener("keydown", (event) => {
+          console.log(event.key);
+
           switch (event.key) {
                case "a": {
                     if (playerCar.x >= middleLane) {
@@ -194,6 +241,9 @@ function Game() {
                          );
                     }
                     break;
+               }
+               case "w": {
+                    bulletFired();
                }
           }
      });

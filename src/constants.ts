@@ -3,12 +3,16 @@ export const DIMENSIONS = {
      CANVAS_HEIGHT: 700,
      CAR_WIDTH: 80,
      CAR_HEIGHT: 110,
+     DIVIDER_WIDTH: 5,
+     DIVIDER_HEIGHt: 150,
+     DIVIDER_GAP: 300,
 };
 
 export const SPEED = {
      PLAYER_SPEED: 20,
      OBSTACLE_SPEED: 2,
      MAX_SPEED: 8,
+     DIVIDER_SPEED: 7,
 };
 
 export const PLAYER_DISPLACEMENT = 200;
