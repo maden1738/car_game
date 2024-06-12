@@ -6,6 +6,8 @@ export const DIMENSIONS = {
      DIVIDER_WIDTH: 5,
      DIVIDER_HEIGHt: 150,
      DIVIDER_GAP: 300,
+     BULLET_WIDTH: 40,
+     BULLET_HEIGHT: 100,
 };
 
 export const SPEED = {
@@ -13,6 +15,7 @@ export const SPEED = {
      OBSTACLE_SPEED: 2,
      MAX_SPEED: 8,
      DIVIDER_SPEED: 7,
+     BULLET_SPEED: 2,
 };
 
 export const PLAYER_DISPLACEMENT = 200;
