@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+     <head>
+          <meta charset="UTF-8" />
+          <meta
+               name="viewport"
+               content="width=device-width, initial-scale=1.0"
+          />
+          <title>CAR GAME</title>
+     </head>
+     <body>
+          <section class="start-screen">
+               <h1>CAR GAME</h1>
+               <button id="start-button">Start Game</button>
+          </section>
+          <main>
+               <div>
+                    <h2>Score: <span id="score"></span></h2>
+                    <canvas id="canvas"></canvas>
+               </div>
+               <div class="gameover-screen">
+                    <h1>GAME OVER</h1>
+                    <div>Your Score: <span id="final-score"></span></div>
+                    <button id="play-again">Try Again !!</button>
+               </div>
+          </main>
+          <script type="module" src="/src/main.ts"></script>
+     </body>
+</html>
